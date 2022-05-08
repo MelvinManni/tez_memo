@@ -24,13 +24,13 @@ export default {
       await wallet.requestPermissions({
         network: network,
       });
-      dispatch("checkWalletConnected");
+      dispatch("checkWalletConnection");
     } catch (error) {
       console.log(error);
     }
   },
 
-  async checkWalletConnected({ commit }) {
+  async checkWalletConnection({ commit }) {
     try {
       const activeAccount = await wallet.client.getActiveAccount();
       let pkh;
@@ -51,7 +51,7 @@ export default {
 
   async disconnectWallet({ dispatch }) {
     await wallet.clearActiveAccount();
-    dispatch("checkWalletConnected");
+    dispatch("checkWalletConnection");
 
     // set the pkh to empty
   },

@@ -8,12 +8,20 @@
 <script>
 import Header from "./components/Header.vue";
 import Body from "./components/Body.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "App",
   components: {
     Header,
     Body,
+  },
+
+  created() {
+    this.checkWalletConnection();
+  },
+  methods: {
+    ...mapActions(["checkWalletConnection"]),
   },
 };
 </script>

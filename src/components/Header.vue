@@ -5,29 +5,37 @@
     </div>
 
     <div>
-      <button>Connect Wallet</button>
+      <button v-if="getConnected" @click="disconnect" class="is-connected">
+        {{ formatAddress(getPkh) }}
+      </button>
+      <button v-else @click="connect">Connect Wallet</button>
     </div>
   </nav>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { formatPkhString } from "../utils";
 
 export default {
   name: " NavHeader",
 
   computed: {
-    ...mapActions(["connectWallet", "disconnectWallet"]),
     ...mapGetters(["getPkh", "getConnected"]),
   },
 
   methods: {
+    ...mapActions(["connectWallet", "disconnectWallet"]),
     connect() {
       this.connectWallet();
     },
 
     disconnect() {
       this.disconnectWallet();
+    },
+
+    formatAddress(pkh) {
+      return formatPkhString(pkh);
     },
   },
 };
@@ -58,6 +66,10 @@ nav {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+
+    &.is-connected{
+      font-size: 18px;
+    }
   }
 }
 </style>
