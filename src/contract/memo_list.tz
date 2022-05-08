@@ -1,0 +1,162 @@
+{ parameter
+    (or (or (string %addMemo) (nat %deleteMemo))
+        (or (nat %toggleMemoStatus) (pair %updateMemo (nat %id) (string %memo)))) ;
+  storage
+    (pair (map %memos
+             nat
+             (pair (pair (pair (bool %done) (nat %id)) (pair (string %memo) (address %owner)))
+                   (timestamp %time)))
+          (nat %next_memo_id)) ;
+  code { LAMBDA
+           (pair nat (pair (map nat (pair (pair (pair bool nat) (pair string address)) timestamp)) nat))
+           bool
+           { DUP ; CDR ; CAR ; SWAP ; CAR ; MEM } ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CDR ;
+         DIG 2 ;
+         CAR ;
+         IF_LEFT
+           { IF_LEFT
+               { SWAP ;
+                 PAIR ;
+                 DUP ;
+                 CAR ;
+                 DUP ;
+                 CDR ;
+                 PUSH string "Memo id already exists" ;
+                 DUP 3 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 5 ;
+                 SWAP ;
+                 EXEC ;
+                 NOT ;
+                 IF { DROP } { FAILWITH } ;
+                 NOW ;
+                 SENDER ;
+                 DIG 4 ;
+                 CDR ;
+                 PAIR ;
+                 DUP 3 ;
+                 PUSH bool False ;
+                 PAIR ;
+                 PAIR ;
+                 PAIR ;
+                 PUSH nat 1 ;
+                 DUP 3 ;
+                 ADD ;
+                 DIG 3 ;
+                 CAR ;
+                 DIG 2 ;
+                 DIG 3 ;
+                 SWAP ;
+                 SOME ;
+                 SWAP ;
+                 UPDATE ;
+                 PAIR }
+               { PUSH string "Memo id does not exist" ;
+                 DUP 3 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 4 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CDR ;
+                 DIG 2 ;
+                 CAR ;
+                 DIG 2 ;
+                 NONE (pair (pair (pair bool nat) (pair string address)) timestamp) ;
+                 SWAP ;
+                 UPDATE ;
+                 PAIR } }
+           { IF_LEFT
+               { PUSH string "Memo id does not exist" ;
+                 DUP 3 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 4 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CAR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 GET ;
+                 IF_NONE { PUSH string "Something went wrong!" ; FAILWITH } {} ;
+                 DUP 3 ;
+                 CDR ;
+                 DIG 3 ;
+                 CAR ;
+                 DUP 3 ;
+                 CDR ;
+                 DUP 4 ;
+                 CAR ;
+                 CDR ;
+                 DUP 5 ;
+                 CAR ;
+                 CAR ;
+                 CDR ;
+                 DIG 5 ;
+                 CAR ;
+                 CAR ;
+                 CAR ;
+                 NOT ;
+                 PAIR ;
+                 PAIR ;
+                 PAIR ;
+                 SOME ;
+                 DIG 3 ;
+                 UPDATE ;
+                 PAIR }
+               { DUP ;
+                 CAR ;
+                 PUSH string "Memo id does not exist" ;
+                 DUP 4 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 5 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 DUP 3 ;
+                 CAR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 GET ;
+                 IF_NONE { PUSH string "Something went wrong!" ; FAILWITH } {} ;
+                 DUP 4 ;
+                 CDR ;
+                 DIG 4 ;
+                 CAR ;
+                 DUP 3 ;
+                 CDR ;
+                 DUP 4 ;
+                 CAR ;
+                 CDR ;
+                 CDR ;
+                 DIG 6 ;
+                 CDR ;
+                 PAIR ;
+                 DIG 4 ;
+                 CAR ;
+                 CAR ;
+                 PAIR ;
+                 PAIR ;
+                 SOME ;
+                 DIG 3 ;
+                 UPDATE ;
+                 PAIR } } ;
+         NIL operation ;
+         PAIR } }
+

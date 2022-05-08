@@ -1,0 +1,17 @@
+#include "memo_actions.jsligo"
+
+type parameter = ["AddMemo", string] | ["ToggleMemoStatus", nat] | ["UpdateMemo", update_params ]| ["DeleteMemo", nat] 
+
+type return_ = [list <operation>, storage];
+
+let main = ([action, store]: [parameter, storage]): return_ => {
+ return [
+   (list([]) as list <operation>),    // No operations
+   (match (action, {
+    AddMemo: (memo: string) => addMemo ([store, memo]),
+    ToggleMemoStatus: (memo_id: nat) => toggleMemoStatus ([store, memo_id]),
+    UpdateMemo: (upate_params: update_params) => updateMemo ([store, upate_params]),
+    DeleteMemo: (memo_id: nat) => deleteMemo ([store, memo_id]),
+   }))
+  ]
+}

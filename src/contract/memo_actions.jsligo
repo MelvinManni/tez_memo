@@ -1,0 +1,163 @@
+//initialize types
+
+type memo_record = {
+    id: nat,
+    owner: address,
+    memo: string,
+    time: timestamp,
+    done: bool
+};
+
+type memos = map<nat, memo_record>;
+
+type storage = {
+    next_memo_id : nat,
+    memos : memos,
+}; 
+
+
+type update_params = {
+  id: nat,
+  memo: string,
+}
+
+
+//initial storage expression 
+
+let init_storage: storage = {
+    next_memo_id: (1 as nat),
+    memos: Map.empty
+}
+
+/**
+* @desc Checks if a memo id exists in storage
+* @param {nat} the memo id
+* @param {storage} existing storage 
+* @returns bool
+*/
+let verifyMemoId = ([id, store]: [nat, storage]): bool => {
+    return Map.mem(id, store.memos);
+}
+
+/**
+* @desc Checks if a string length is less than 200
+* @param {string} the string to validate
+* @returns bool
+*/
+let verifyStringLength = (str_: string): bool => {
+    return String.length(str_) <= (200 as nat) 
+}
+
+
+/**
+* @desc Adds a new memmo to the storage
+* @param {string} the new memo to add to storage
+* @param {storage} existing storage 
+* @returns storage
+*/
+
+let addMemo = ([store, memo] : [storage, string]) : storage => {
+    
+    //assign an id for the new memo
+    const memo_id: nat = store.next_memo_id;
+
+    assert_with_error(verifyStringLength(memo), "memo length can not be greater than 200!")
+
+    //verify if the id already exist
+    assert_with_error(!verifyMemoId([memo_id, store]), "Memo id already exists");
+
+    let new_memo: memo_record = {
+        id: memo_id,
+        owner: Tezos.sender,
+        memo: memo,
+        time: Tezos.now,
+        done: false
+    };
+ 
+    //add the new memo to the memo map
+    let new_memos: memos = Map.add(memo_id, new_memo, store.memos);
+  
+    let updated_store: storage = {
+        //updated the id field for the next memo to ensure each id is unique
+        next_memo_id: memo_id + (1 as nat),
+        memos: new_memos
+    };
+ 
+    return updated_store;
+}
+
+/**
+* @desc toggles the done status for a memo
+* @param {nat} the id for the memo to toggle                b 
+* @param {storage} existing storage 
+* @returns storage
+*/
+let toggleMemoStatus = ([store, memo_id] : [storage, nat]) : storage => {
+    
+    assert_with_error(verifyMemoId([memo_id, store]), "Memo id does not exist");
+
+    //return the memo that matches the id param
+    let existing_memo: memo_record = match(Map.find_opt (memo_id, store.memos), {
+    Some: (memo: memo_record) => memo,
+    None: () => (failwith("Something went wrong!") as memo_record)
+    });
+
+    //toggles the value for the done key  
+    let new_memos: memos = Map.update(memo_id, Some(({...existing_memo, done: !existing_memo.done})), store.memos);
+ 
+    let updated_store: storage = {
+        next_memo_id: store.next_memo_id,
+        memos: new_memos
+    };
+
+    return updated_store;
+}
+
+/**
+* @desc updates the memo key for already existing item
+* @param {nat, string} the id for the memo to update and the string value to replace old memo value
+* @param {storage} existing storage 
+* @returns storage
+*/
+let updateMemo = ([store, update_params] : [storage, update_params]) : storage => {
+    const memo_id: nat = update_params.id;
+    const new_memo_string: string = update_params.memo;
+
+    assert_with_error(verifyStringLength(new_memo_string), "memo length can not be greater than 200!")
+
+    assert_with_error(verifyMemoId([memo_id, store]), "Memo id does not exist");
+
+    let existing_memo: memo_record = match(Map.find_opt (memo_id, store.memos), {
+    Some: (memo: memo_record) => memo,
+    None: () => (failwith("Something went wrong!") as memo_record)
+    });
+
+    let new_memos: memos = Map.update(memo_id, Some(({...existing_memo, memo: new_memo_string})), store.memos);
+ 
+    let updated_store: storage = {
+        next_memo_id: store.next_memo_id,
+        memos: new_memos
+    };
+
+    return updated_store;
+}
+
+/**
+* @desc deletes an existing memo
+* @param {nat} the id for the memo to delete
+* @param {storage} existing storage 
+* @returns storage
+*/
+let deleteMemo = ([store, memo_id] : [storage, nat]) : storage => {
+    
+    assert_with_error(verifyMemoId([memo_id, store]), "Memo id does not exist");
+
+    let new_memos: memos = Map.remove(memo_id, store.memos);
+  
+    let updated_store: storage = {
+        next_memo_id: store.next_memo_id,
+        memos: new_memos
+    };
+
+    return updated_store;
+};
