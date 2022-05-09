@@ -28,7 +28,7 @@
         <small class="memo-input-count">{{ new_memo.length }}/200</small>
       </div>
 
-      <button :disabled="new_memo === memo">Update Memo</button>
+      <button :class="loading && 'loading'" :disabled="new_memo === memo">Update Memo</button>
     </form>
   </div>
 </template>
@@ -40,6 +40,7 @@ export default {
   data() {
     return {
       new_memo: "",
+      loading: false,
     };
   },
   props: {
@@ -55,7 +56,9 @@ export default {
   methods: {
     ...mapActions(["updateMemo"]),
     async handleMemoUpdate() {
+      this.loading = true;
       await this.updateMemo({ memo: this.new_memo, id: this.id });
+      this.loading = false;
       this.toggleModal();
     },
   },

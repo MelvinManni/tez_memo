@@ -23,9 +23,13 @@
         </div>
       </div>
 
-      <button @click="toggleMemoStatus(id)" >{{ done ? "Mark As Undone" : "Mark As Done" }}</button>
+      <button :class="toggling && 'loading'" @click="toggle">
+        {{ done ? "Mark As Undone" : "Mark As Done" }}
+      </button>
 
-      <button @click="deleteMemo(id)">Delete Memo</button>
+      <button :class="deleting && 'loading'" @click="del">
+        Delete Memo
+      </button>
     </div>
   </div>
 </template>
@@ -41,9 +45,24 @@ export default {
     toggleModal: Function,
     id: String,
   },
-
+  data() {
+    return {
+      toggling: false,
+      deleting: false,
+    };
+  },
   methods: {
     ...mapActions(["deleteMemo", "toggleMemoStatus"]),
+    async toggle(){
+      this.toggling = true;
+      await this.toggleMemoStatus(this.id);
+      this.toggling = false;
+    },
+    async del(){
+      this.deleting = true;
+      await this.deleteMemo(this.id);
+      this.deleting = false;
+    }
   },
 };
 </script>

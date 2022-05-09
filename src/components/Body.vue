@@ -18,7 +18,7 @@
             maxlength="200"
           />
         </div>
-        <button>
+        <button :class="loading && 'loading'">
           <svg
             width="36"
             height="36"
@@ -113,6 +113,7 @@ export default {
     return {
       memo: "",
       tab: "active",
+      loading: false,
     };
   },
   computed: {
@@ -120,9 +121,12 @@ export default {
   },
   methods: {
     ...mapActions(["addMemo", "toggleMemo"]),
-   async handleFormSubmit() {
-      await this.addMemo(this.memo);
+    async handleFormSubmit() {
+      this.loading = true;
+      const payload = this.memo;
       this.memo = "";
+      await this.addMemo(payload);
+      this.loading = false;
     },
 
     toggleTab(tab) {
@@ -156,6 +160,11 @@ main {
       background: transparent;
       border: none;
       cursor: pointer;
+      &.loading {
+        &::before {
+          background: transparent;
+        }
+      }
     }
   }
 

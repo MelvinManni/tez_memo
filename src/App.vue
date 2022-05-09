@@ -92,6 +92,8 @@ body {
 
 button {
   cursor: pointer;
+  overflow: hidden;
+
   &:active {
     box-shadow: inset 0px 0px 12px rgba(0, 0, 0, 0.2);
     animation: 0.7s pulse 1 forwards;
@@ -101,6 +103,37 @@ button {
     animation: none;
     cursor: not-allowed;
     opacity: 0.4;
+  }
+
+  &.loading {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &::after {
+      content: "";
+      position: absolute;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      border-top: 3.5px solid #3498db;
+      border-right: 3.5px solid #3498db;
+      width: 10px;
+      height: 10px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: spin 2s linear infinite;
+      z-index: 1000;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: #fff;
+      opacity: 0.75;
+    }
   }
 }
 
@@ -115,6 +148,15 @@ button {
 
   to {
     transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
