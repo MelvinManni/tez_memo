@@ -11,7 +11,7 @@ const network = { type: NetworkType.ITHACANET };
 const Tezos = new TezosToolkit("https://ithacanet.ecadinfra.com");
 
 const wallet = new BeaconWallet({
-  name: "Tez memo",
+  name: "Tez-memo",
   preferredNetwork: network.type,
 }); // Takes the same arguments as the DAppClient constructor
 
@@ -80,7 +80,7 @@ export default {
       let done_memo = [];
 
       if (state.connected) {
-        console.log("started");
+  
         const contract = await getContract();
         const storage = await contract.storage();
         const storage_user_memos = await storage.users.get(state.pkh);
@@ -111,22 +111,105 @@ export default {
     } finally {
       setTimeout(() => {
         commit("updateLoading", false);
-      }, 2000);
+      }, 1000);
     } // end try catch
+  },
+  /**
+   * @description Gets a list of a users memos from the contract and updates the state without loading the page
+   */
+  async softUpdateMemoList({ state, commit }) {
+    try {
+      let active_memo = [];
+      let done_memo = [];
+
+      if (state.connected) {
+  
+        const contract = await getContract();
+        const storage = await contract.storage();
+        const storage_user_memos = await storage.users.get(state.pkh);
+
+        const user_memos = storage_user_memos.map((val) => new BigNumber(val).toNumber());
+        console.log(user_memos);
+
+        for (let index = 0; index < user_memos.length; index++) {
+          const memo = await storage.memos.get({
+            owner: state.pkh,
+            id: user_memos[index].toString(),
+          });
+
+          const formated_memo = { ...memo, id: new BigNumber(memo.id).toString() };
+
+          if (!memo.done) {
+            active_memo.push(formated_memo);
+          } else {
+            done_memo.push(formated_memo);
+          }
+        }
+      }
+
+      commit("updateActiveMemo", active_memo);
+      commit("updateDoneMemo", done_memo);
+    } catch (error) {
+      console.log(error);
+    } 
   },
   /**
    * @param {string} memo
    * @description Creates a new memo and adds it to the contract storage
    */
   async addMemo({ dispatch }, memo) {
-    console.log("started");
     try {
       const contract = await getContract();
-      await contract.methods.addMemo(memo).send();
-      dispatch("getMemoList");
+      const op = await contract.methods.addMemo(memo).send();
+      await op.confirmation()
+      dispatch("softUpdateMemoList");
     } catch (error) {
       console.log(error);
     }
-    console.log("started");
+  },
+
+    /**
+   * @param {string} id
+   * @description deletes the memo with the given id from the contract storage
+   */
+  async deleteMemo({ dispatch }, id) {
+    try {
+      const contract = await getContract();
+      const op = await contract.methods.deleteMemo(id).send();
+      await op.confirmation()
+      dispatch("softUpdateMemoList");
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  /**
+   * @param {string} id
+   * @description toggles the done field for the given id from the contract storage
+   */
+  async toggleMemoStatus({ dispatch }, id) {
+    try {
+      const contract = await getContract();
+      const op = await contract.methods.toggleMemoStatus(id).send();
+      await op.confirmation()
+      dispatch("softUpdateMemoList");
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  /**
+   * @param {string} id
+   * @description updates the memo with the given id from the contract storage
+   */
+  async updateMemo({ dispatch }, payload) {
+    try {
+      const contract = await getContract();
+      const op = await contract.methodsObject.updateMemo(payload).send();
+      await op.confirmation()
+      dispatch("softUpdateMemoList");
+    } catch (error) {
+      console.log(error);
+    }
   },
 };

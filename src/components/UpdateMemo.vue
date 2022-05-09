@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div>
+    <form autocomplete="off" @submit.prevent="handleMemoUpdate">
       <button @click="toggleModal" class="close-modal">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -15,35 +15,49 @@
         </svg>
       </button>
       <div class="memo-wrapper">
-        <p class="memo-text">
-          {{ memo }}
-        </p>
-        <div class="row">
-          <small> {{ time }} </small>
-        </div>
+        <input
+          required
+          minlength="3"
+          name="memo"
+          class="form-input"
+          type="text"
+          placeholder="New memo..."
+          v-model="new_memo"
+          maxlength="200"
+        />
+        <small class="memo-input-count">{{ new_memo.length }}/200</small>
       </div>
 
-      <button @click="toggleMemoStatus(id)" >{{ done ? "Mark As Undone" : "Mark As Done" }}</button>
-
-      <button @click="deleteMemo(id)">Delete Memo</button>
-    </div>
+      <button :disabled="new_memo === memo">Update Memo</button>
+    </form>
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 export default {
-  name: "MemoModal",
+  name: "UpdateMemo",
+  data() {
+    return {
+      new_memo: "",
+    };
+  },
   props: {
     memo: String,
-    time: String,
-    done: Boolean,
-    toggleModal: Function,
     id: String,
+    toggleModal: Function,
+  },
+
+  mounted() {
+    this.new_memo = this.memo;
   },
 
   methods: {
-    ...mapActions(["deleteMemo", "toggleMemoStatus"]),
+    ...mapActions(["updateMemo"]),
+    async handleMemoUpdate() {
+      await this.updateMemo({ memo: this.new_memo, id: this.id });
+      this.toggleModal();
+    },
   },
 };
 </script>
@@ -70,7 +84,7 @@ export default {
     display: none;
   }
 
-  > div {
+  > form {
     position: relative;
   }
   .close-modal {
@@ -105,22 +119,15 @@ export default {
 
 .memo-wrapper {
   background: #42497573;
-  padding: 5px 15px;
+  padding: 15px;
+  padding-bottom: 10px;
   text-align: left;
   border-radius: 4px;
   max-width: 600px;
-  min-width: 300px;
-  .memo-text {
-    font-size: 16px;
-    color: #707594;
-    font-weight: 600;
-  }
+  min-width: 400px;
 
-  .row {
-    display: flex;
-    align-items: bottom;
-    justify-content: space-between;
-    margin-top: 10px;
+  @media (max-width: 576px) {
+    min-width: 300px;
   }
 }
 </style>

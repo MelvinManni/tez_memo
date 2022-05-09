@@ -35,13 +35,11 @@
     <div class="tab-wrapper">
       <button
         @click="toggleTab('active')"
-        :disabled="tab === 'active'"
         :class="tab === 'active' ? 'is-active' : ''"
       >
         Active
       </button>
       <button
-        :disabled="tab === 'done'"
         @click="toggleTab('done')"
         :class="tab === 'done' ? 'is-active' : ''"
       >
@@ -84,6 +82,7 @@
           :key="memo.id"
           :id="memo.id"
           :time="memo.time"
+          :done="memo.done"
           :memo="memo.memo"
         />
       </div>
@@ -92,6 +91,7 @@
           v-for="memo in getDoneMemo"
           :key="memo.id"
           :id="memo.id"
+          :done="memo.done"
           :time="memo.time"
           :memo="memo.memo"
         />
@@ -121,7 +121,6 @@ export default {
   methods: {
     ...mapActions(["addMemo", "toggleMemo"]),
    async handleFormSubmit() {
-      console.log("Memo: ", this.memo);
       await this.addMemo(this.memo);
       this.memo = "";
     },
@@ -139,13 +138,6 @@ main {
   max-width: 720px;
   margin: auto;
   padding: 60px 15px;
-
-  .memo-input-count {
-    font-size: 12px;
-    line-height: 0;
-    font-weight: 200;
-    margin-left: 3px;
-  }
 
   form.flex-row {
     display: flex;
@@ -186,13 +178,15 @@ main {
       font-size: 14px;
       border: none;
       border: 1.5px solid #707594a3;
+      opacity: 0.5;
       &:last-child {
         border-radius: 0 4px 4px 0;
       }
 
       &.is-active {
         background: #707594;
-        color: #11152b;
+        color: #fff;
+        opacity: 1;
       }
     }
   }

@@ -8,8 +8,7 @@
       </div>
       <div class="row">
         <small> {{ time }} </small>
-        <button v-if="!done">mark as done</button>
-        <button v-if="done">mark as undone</button>
+        <button @click="toggleUpdateModal" >update memo</button>
       </div>
     </div>
     <memo-modal
@@ -20,16 +19,19 @@
       :done="done"
       :id="id"
     ></memo-modal>
+    <UpdateMemo v-if="updateModal" :memo="memo" :id="id" :toggleModal="toggleUpdateModal" />
   </div>
 </template>
 
 <script>
 import MemoModal from "./MemoModal.vue";
+import UpdateMemo from "./UpdateMemo.vue";
 
 export default {
   name: "MemoItem",
   components: {
     MemoModal,
+    UpdateMemo,
   },
 
   props: {
@@ -42,12 +44,16 @@ export default {
   data() {
     return {
       showModal: false,
+      updateModal: false,
     };
   },
 
   methods: {
     toggleModal() {
       this.showModal = !this.showModal;
+    },
+    toggleUpdateModal() {
+      this.updateModal = !this.updateModal;
     },
   },
 };

@@ -23,7 +23,6 @@ export default {
 
   watch: {
     getConnected(newValue) {
-      console.log(newValue);
       if (newValue) {
         this.getMemoList();
       }
@@ -31,7 +30,6 @@ export default {
   },
 
   created() {
-    console.log(this.getConnected);
     this.checkWalletConnection();
   },
   methods: {
@@ -85,6 +83,13 @@ body {
   font-family: "Noto Sans", sans-serif;
 }
 
+.memo-input-count {
+  font-size: 12px;
+  line-height: 0;
+  font-weight: 200;
+  margin-left: 3px;
+}
+
 button {
   cursor: pointer;
   &:active {
@@ -95,6 +100,7 @@ button {
   &:disabled {
     animation: none;
     cursor: not-allowed;
+    opacity: 0.4;
   }
 }
 
