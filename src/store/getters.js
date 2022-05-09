@@ -8,10 +8,10 @@ export default {
   getLoading(state) {
     return state.loading;
   },
-  getctiveMemo(state) {
+  getActiveMemo(state) {
     return state.activeMemo;
   },
-  getdoneMemo(state) {
+  getDoneMemo(state) {
     return state.doneMemo;
   },
 };

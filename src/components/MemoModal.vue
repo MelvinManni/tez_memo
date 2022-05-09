@@ -39,7 +39,7 @@ export default {
     time: String,
     done: Boolean,
     toggleModal: Function,
-    id: Number,
+    id: String,
   },
 };
 </script>
@@ -105,6 +105,7 @@ export default {
   text-align: left;
   border-radius: 4px;
   max-width: 600px;
+  min-width: 300px;
   .memo-text {
     font-size: 16px;
     color: #707594;

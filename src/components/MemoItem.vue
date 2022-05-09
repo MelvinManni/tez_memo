@@ -36,7 +36,7 @@ export default {
     memo: String,
     time: String,
     done: Boolean,
-    id: Number,
+    id: String,
   },
 
   data() {
@@ -57,8 +57,9 @@ export default {
 <style lang="scss" scoped>
 .memo-wrapper {
   background: #42497573;
-  padding: 5px 15px;
+  padding: 10px 15px;
   text-align: left;
+  margin-bottom: 20px;
   border-radius: 4px;
   > div:first-child {
     cursor: pointer;
