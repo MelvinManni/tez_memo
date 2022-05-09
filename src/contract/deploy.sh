@@ -16,7 +16,7 @@ echo "  ******     ******"
 echo "  ******     ******"
 
 
-CONTRACT_NAME=TEZ_MEMO
+CONTRACT_NAME=Tez-memo
 
 echo ""
 echo ""
@@ -24,7 +24,7 @@ echo ""
 echo "CONTRACT NAME:"
 echo $CONTRACT_NAME
 
-AMOUNT_TEZ=10
+AMOUNT_TEZ=5
 
 echo ""
 echo ""
@@ -40,7 +40,7 @@ echo ""
 echo "FROM USER:"
 echo $FROM_USER
 
-MICHELSON_FILE=memo_list.tz
+MICHELSON_FILE=./src/contract/michealson/tez_memo.tz
 
 echo ""
 echo ""
@@ -57,6 +57,6 @@ echo "GAZ FEE:"
 echo $GAZ_FEE
 
 
-tezos-client originate contract $CONTRACT_NAME transferring $AMOUNT_TEZ from $FROM_USER running $MICHELSON_FILE --init '(Pair {} 1)' --burn-cap $GAZ_FEE
+tezos-client originate contract $CONTRACT_NAME transferring $AMOUNT_TEZ from $FROM_USER running $MICHELSON_FILE --init '(Pair (Pair {} 1) {})' --burn-cap $GAZ_FEE
 
 exit 0

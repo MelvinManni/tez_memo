@@ -1,0 +1,252 @@
+{ parameter
+    (or (or (string %addMemo) (nat %deleteMemo))
+        (or (nat %toggleMemoStatus) (pair %updateMemo (nat %id) (string %memo)))) ;
+  storage
+    (pair (pair (map %memos
+                   (pair (nat %id) (address %owner))
+                   (pair (pair (pair (bool %done) (nat %id)) (pair (string %memo) (address %owner)))
+                         (timestamp %time)))
+                (nat %next_memo_id))
+          (map %users address (set nat))) ;
+  code { LAMBDA
+           (pair nat
+                 (pair (pair (map (pair nat address) (pair (pair (pair bool nat) (pair string address)) timestamp))
+                             nat)
+                       (map address (set nat))))
+           bool
+           { DUP ; CDR ; CAR ; CAR ; SENDER ; DIG 2 ; CAR ; PAIR ; MEM } ;
+         LAMBDA string bool { PUSH nat 200 ; SWAP ; SIZE ; COMPARE ; LE } ;
+         DUP 3 ;
+         CDR ;
+         DIG 3 ;
+         CAR ;
+         IF_LEFT
+           { IF_LEFT
+               { SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CAR ;
+                 CDR ;
+                 SENDER ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 PAIR ;
+                 PUSH string "memo length can not be greater than 200!" ;
+                 DUP 4 ;
+                 DIG 6 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 PUSH string "Memo id already exists" ;
+                 DUP 5 ;
+                 DUP 4 ;
+                 PAIR ;
+                 DIG 6 ;
+                 SWAP ;
+                 EXEC ;
+                 NOT ;
+                 IF { DROP } { FAILWITH } ;
+                 NOW ;
+                 SENDER ;
+                 DIG 4 ;
+                 PAIR ;
+                 DUP 4 ;
+                 PUSH bool False ;
+                 PAIR ;
+                 PAIR ;
+                 PAIR ;
+                 DUP 4 ;
+                 CDR ;
+                 SENDER ;
+                 GET ;
+                 IF_NONE
+                   { DUP 4 ;
+                     CDR ;
+                     EMPTY_SET nat ;
+                     DUP 5 ;
+                     PUSH bool True ;
+                     SWAP ;
+                     UPDATE ;
+                     SOME ;
+                     SENDER ;
+                     UPDATE }
+                   { DUP 5 ;
+                     CDR ;
+                     SWAP ;
+                     DUP 5 ;
+                     PUSH bool True ;
+                     SWAP ;
+                     UPDATE ;
+                     SOME ;
+                     SENDER ;
+                     UPDATE } ;
+                 PUSH nat 1 ;
+                 DIG 4 ;
+                 ADD ;
+                 DIG 4 ;
+                 CAR ;
+                 CAR ;
+                 DIG 3 ;
+                 DIG 4 ;
+                 SWAP ;
+                 SOME ;
+                 SWAP ;
+                 UPDATE ;
+                 PAIR ;
+                 PAIR }
+               { DIG 2 ;
+                 DROP ;
+                 PUSH string "Memo id does not exist" ;
+                 DUP 3 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 4 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 SENDER ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 PAIR ;
+                 DUP 3 ;
+                 CDR ;
+                 SENDER ;
+                 GET ;
+                 IF_NONE
+                   { SWAP ; DROP ; PUSH string "Something went wrong!" ; FAILWITH }
+                   { DUP 4 ;
+                     CDR ;
+                     SWAP ;
+                     DIG 3 ;
+                     PUSH bool False ;
+                     SWAP ;
+                     UPDATE ;
+                     SOME ;
+                     SENDER ;
+                     UPDATE } ;
+                 DUP 3 ;
+                 CAR ;
+                 CDR ;
+                 DIG 3 ;
+                 CAR ;
+                 CAR ;
+                 DIG 3 ;
+                 NONE (pair (pair (pair bool nat) (pair string address)) timestamp) ;
+                 SWAP ;
+                 UPDATE ;
+                 PAIR ;
+                 PAIR } }
+           { IF_LEFT
+               { DIG 2 ;
+                 DROP ;
+                 PUSH string "Memo id does not exist" ;
+                 DUP 3 ;
+                 DUP 3 ;
+                 PAIR ;
+                 DIG 4 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 SENDER ;
+                 SWAP ;
+                 PAIR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CAR ;
+                 CAR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 GET ;
+                 IF_NONE { PUSH string "Something went wrong!" ; FAILWITH } {} ;
+                 DUP 3 ;
+                 CDR ;
+                 DUP 4 ;
+                 CAR ;
+                 CDR ;
+                 DIG 4 ;
+                 CAR ;
+                 CAR ;
+                 DUP 4 ;
+                 CDR ;
+                 DUP 5 ;
+                 CAR ;
+                 CDR ;
+                 DUP 6 ;
+                 CAR ;
+                 CAR ;
+                 CDR ;
+                 DIG 6 ;
+                 CAR ;
+                 CAR ;
+                 CAR ;
+                 NOT ;
+                 PAIR ;
+                 PAIR ;
+                 PAIR ;
+                 SOME ;
+                 DIG 4 ;
+                 UPDATE ;
+                 PAIR ;
+                 PAIR }
+               { DUP ;
+                 CAR ;
+                 SWAP ;
+                 CDR ;
+                 SENDER ;
+                 DUP 3 ;
+                 PAIR ;
+                 PUSH string "memo length can not be greater than 200!" ;
+                 DUP 3 ;
+                 DIG 6 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 PUSH string "Memo id does not exist" ;
+                 DUP 5 ;
+                 DIG 4 ;
+                 PAIR ;
+                 DIG 5 ;
+                 SWAP ;
+                 EXEC ;
+                 IF { DROP } { FAILWITH } ;
+                 DUP 3 ;
+                 CAR ;
+                 CAR ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 GET ;
+                 IF_NONE { PUSH string "Something went wrong!" ; FAILWITH } {} ;
+                 DUP 4 ;
+                 CDR ;
+                 DUP 5 ;
+                 CAR ;
+                 CDR ;
+                 DIG 5 ;
+                 CAR ;
+                 CAR ;
+                 DUP 4 ;
+                 CDR ;
+                 DUP 5 ;
+                 CAR ;
+                 CDR ;
+                 CDR ;
+                 DIG 7 ;
+                 PAIR ;
+                 DIG 5 ;
+                 CAR ;
+                 CAR ;
+                 PAIR ;
+                 PAIR ;
+                 SOME ;
+                 DIG 4 ;
+                 UPDATE ;
+                 PAIR ;
+                 PAIR } } ;
+         NIL operation ;
+         PAIR } }
+

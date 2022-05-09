@@ -5,6 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "deploy:contract": "bash ./src/contract/deploy.sh",
+    "compile:contract": "ligo compile contract src/contract/memo_list.jsligo -o src/contract/michealson/tez_memo.tz",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

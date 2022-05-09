@@ -8,7 +8,7 @@
 <script>
 import Header from "./components/Header.vue";
 import Body from "./components/Body.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "App",
@@ -17,11 +17,25 @@ export default {
     Body,
   },
 
+  computed: {
+    ...mapGetters(["getConnected"]),
+  },
+
+  watch: {
+    getConnected(newValue) {
+      console.log(newValue);
+      if (newValue) {
+        this.getMemoList();
+      }
+    },
+  },
+
   created() {
+    console.log(this.getConnected);
     this.checkWalletConnection();
   },
   methods: {
-    ...mapActions(["checkWalletConnection"]),
+    ...mapActions(["checkWalletConnection", "getMemoList"]),
   },
 };
 </script>

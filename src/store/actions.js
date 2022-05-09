@@ -1,6 +1,7 @@
 import { TezosToolkit } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ColorMode, NetworkType } from "@airgap/beacon-sdk";
+import { CONTRACT_ADDRESS } from "@/utils";
 
 // Set the network
 const network = { type: NetworkType.ITHACANET };
@@ -17,6 +18,8 @@ Tezos.setWalletProvider(wallet);
 
 // setting the color mode for beacon wallet
 wallet.client.setColorMode(ColorMode.DARK);
+
+const getContract = async () => await Tezos.contract.at(CONTRACT_ADDRESS);
 
 export default {
   async connectWallet({ dispatch }) {
@@ -54,5 +57,20 @@ export default {
     dispatch("checkWalletConnection");
 
     // set the pkh to empty
+  },
+
+  async getMemoList({ state }) {
+    if (state.connected) {
+      console.log("started");
+      const contract = await getContract();
+      const storage = await contract.storage();
+      const user_memos = await storage.users.get(state.pkh);
+      // const memoMap = storage.memos.get({
+      //   owner: state.pkh,
+      // });
+
+      console.log(user_memos);
+    }
+    console.log("ended");
   },
 };
