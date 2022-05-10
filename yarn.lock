@@ -1342,14 +1342,6 @@
     bignumber.js "^9.0.2"
     rxjs "^6.6.3"
 
-"@taquito/tezbridge-signer@^12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@taquito/tezbridge-signer/-/tezbridge-signer-12.1.0.tgz#6eba451e7f094dcadb2b0c48d412473625652e10"
-  integrity sha512-q+ldppQj44ErzWpHqgAUTOwHeHN6C52wh2kR4Lwm7EG5y1xc6Mr6lvBABppmXXQ5Nwu5nzI9/Kob/H/DlGF7DA==
-  dependencies:
-    "@taquito/utils" "^12.1.0"
-    typedarray-to-buffer "^4.0.0"
-
 "@taquito/utils@^12.1.0":
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-12.1.0.tgz#f51c046d02ddccd616f5e2a0b2ce04d8e30f67b5"
