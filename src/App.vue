@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <Header />
-    <Body />
+    <AppHeader />
+    <AppBody />
   </div>
 </template>
 
 <script>
-import Header from "./components/Header.vue";
-import Body from "./components/Body.vue";
+import AppHeader from "./components/AppHeader.vue";
+import AppBody from "./components/AppBody.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "App",
   components: {
-    Header,
-    Body,
+    AppHeader,
+    AppBody,
   },
 
   computed: {
